@@ -81,8 +81,8 @@ Mật khẩu: adminsecretpassword
 - [x] Xin quyền truy cập thư viện ảnh khi cần.
 - [x] Hiển thị ảnh đã chọn trước khi lưu.
 - [ ] Kiểm tra định dạng và kích thước hình ảnh.
-- [x] Tải hình ảnh lên Firebase Storage.
-- [x] Lưu đường dẫn hoặc URL hình ảnh vào trường `hinhanh` trong Firestore.
+- [x] Tải hình ảnh lên ImgBB bằng API key từ `.env`.
+- [x] Lưu URL hình ảnh ImgBB vào trường `hinhanh` trong Firestore.
 - [x] Kiểm tra các trường bắt buộc.
 - [x] Kiểm tra định dạng email.
 - [x] Lưu tài khoản vào collection `users`.
