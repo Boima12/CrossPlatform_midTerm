@@ -89,17 +89,26 @@ export async function deleteUser(id: string): Promise<void> {
     await deleteDoc(doc(db, "users", id));
 }
 
-export async function uploadUserImage(uri: string): Promise<string> {
+export async function uploadUserImage(
+    uri: string,
+    imageBase64?: string,
+): Promise<string> {
     const apiKey = process.env.EXPO_PUBLIC_IMGBB_API_KEY;
     if (!apiKey) {
         throw new Error("Thiếu EXPO_PUBLIC_IMGBB_API_KEY trong file .env.");
     }
 
-    const response = await fetch(uri);
-    if (!response.ok) throw new Error("Không thể đọc hình ảnh đã chọn.");
+    let base64Image = imageBase64;
+    if (!base64Image) {
+        const response = await fetch(uri);
+        if (!response.ok) {
+            throw new Error("Không thể đọc hình ảnh đã chọn.");
+        }
 
-    const blob = await response.blob();
-    const base64Image = await blobToBase64(blob);
+        const blob = await response.blob();
+        base64Image = await blobToBase64(blob);
+    }
+
     const body = new FormData();
     body.append("image", base64Image);
 

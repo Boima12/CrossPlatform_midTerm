@@ -45,6 +45,9 @@ export default function UsersScreen() {
   const [formVisible, setFormVisible] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<UserFields>(EMPTY_FORM);
+  const [selectedImageBase64, setSelectedImageBase64] = useState<string | null>(
+    null,
+  );
   const [search, setSearch] = useState("");
   const [filterField, setFilterField] = useState<FilterField>("all");
 
@@ -86,6 +89,7 @@ export default function UsersScreen() {
 
   const resetForm = useCallback(() => {
     setForm({ ...EMPTY_FORM });
+    setSelectedImageBase64(null);
     setEditingId(null);
     setFormVisible(false);
   }, []);
@@ -97,6 +101,7 @@ export default function UsersScreen() {
       hoten: user.hoten,
       hinhanh: user.hinhanh,
     });
+    setSelectedImageBase64(null);
     setEditingId(user.id);
     setFormVisible(true);
   };
@@ -115,11 +120,14 @@ export default function UsersScreen() {
       mediaTypes: ["images"],
       allowsEditing: true,
       aspect: [1, 1],
+      base64: true,
       quality: 0.8,
     });
 
     if (!result.canceled && result.assets[0]) {
-      setForm((current) => ({ ...current, hinhanh: result.assets[0].uri }));
+      const asset = result.assets[0];
+      setForm((current) => ({ ...current, hinhanh: asset.uri }));
+      setSelectedImageBase64(asset.base64 ?? null);
     }
   };
 
@@ -140,8 +148,8 @@ export default function UsersScreen() {
     setSaving(true);
     try {
       let imageUrl = form.hinhanh;
-      if (imageUrl && !imageUrl.startsWith("http")) {
-        imageUrl = await uploadUserImage(imageUrl);
+      if (imageUrl && (selectedImageBase64 || !imageUrl.startsWith("http"))) {
+        imageUrl = await uploadUserImage(imageUrl, selectedImageBase64 ?? undefined);
       }
 
       const fields: UserFields = {
@@ -267,6 +275,7 @@ export default function UsersScreen() {
 
         <TouchableOpacity style={styles.addButton} onPress={() => {
           setForm({ ...EMPTY_FORM });
+          setSelectedImageBase64(null);
           setEditingId(null);
           setFormVisible(true);
         }}>
